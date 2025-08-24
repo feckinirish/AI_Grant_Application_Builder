@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step by Step Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Step by Step Diagnostic</h1>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Test Steps</h2>
+            <div class="space-y-2">
+                <button id="step1" class="block w-full text-left px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded">
+                    Step 1: Test ResultsFormatter Loading
+                </button>
+                <button id="step2" class="block w-full text-left px-4 py-2 bg-green-100 hover:bg-green-200 rounded">
+                    Step 2: Test GrantAnalyzer Loading
+                </button>
+                <button id="step3" class="block w-full text-left px-4 py-2 bg-purple-100 hover:bg-purple-200 rounded">
+                    Step 3: Test GrantAnalyzer Initialization
+                </button>
+                <button id="step4" class="block w-full text-left px-4 py-2 bg-orange-100 hover:bg-orange-200 rounded">
+                    Step 4: Test Results Display
+                </button>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Console Output</h2>
+            <div id="console" class="bg-gray-100 p-4 rounded font-mono text-sm min-h-40 max-h-80 overflow-y-auto">
+                Ready to run tests...
+            </div>
+        </div>
+        
+        <div id="app" class="mt-6 bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">App Container</h2>
+            <div class="text-gray-500">GrantAnalyzer will render here...</div>
+        </div>
+    </div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'success' ? 'text-green-600' : 
+                         type === 'error' ? 'text-red-600' : 
+                         type === 'warning' ? 'text-yellow-600' : 'text-blue-600';
+            
+            console.innerHTML += `<div class="${color}">[${timestamp}] ${message}</div>`;
+            console.scrollTop = console.scrollHeight;
+            window.console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        let grantAnalyzer = null;
+        
+        // Step 1: Test ResultsFormatter
+        document.getElementById('step1').addEventListener('click', function() {
+            log('=== STEP 1: Testing ResultsFormatter ===');
+            
+            // Check if script loaded
+            const script = document.querySelector('script[src="js/results-formatter.js"]');
+            if (script) {
+                log('✅ ResultsFormatter script tag found');
+            } else {
+                log('❌ ResultsFormatter script tag not found');
+            }
+            
+            // Check if class is available
+            if (typeof ResultsFormatter !== 'undefined') {
+                log('✅ ResultsFormatter class is available');
+                
+                try {
+                    const formatter = new ResultsFormatter();
+                    log('✅ ResultsFormatter instance created');
+                    
+                    // Test a simple method
+                    const testResult = formatter.formatBulletList(['Test item']);
+                    if (testResult.includes('Test item')) {
+                        log('✅ formatBulletList method works');
+                    } else {
+                        log('❌ formatBulletList method failed');
+                    }
+                    
+                } catch (error) {
+                    log(`❌ Error creating ResultsFormatter: ${error.message}`, 'error');
+                }
+            } else {
+                log('❌ ResultsFormatter class not available', 'error');
+            }
+        });
+        
+        // Step 2: Test GrantAnalyzer Loading
+        document.getElementById('step2').addEventListener('click', function() {
+            log('=== STEP 2: Testing GrantAnalyzer Loading ===');
+            
+            // Check if script loaded
+            const script = document.querySelector('script[src="js/app.js"]');
+            if (script) {
+                log('✅ GrantAnalyzer script tag found');
+            } else {
+                log('❌ GrantAnalyzer script tag not found');
+            }
+            
+            // Check if class is available
+            if (typeof GrantAnalyzer !== 'undefined') {
+                log('✅ GrantAnalyzer class is available');
+            } else {
+                log('❌ GrantAnalyzer class not available', 'error');
+            }
+        });
+        
+        // Step 3: Test GrantAnalyzer Initialization
+        document.getElementById('step3').addEventListener('click', function() {
+            log('=== STEP 3: Testing GrantAnalyzer Initialization ===');
+            
+            if (typeof GrantAnalyzer === 'undefined') {
+                log('❌ GrantAnalyzer class not available', 'error');
+                return;
+            }
+            
+            try {
+                grantAnalyzer = new GrantAnalyzer();
+                log('✅ GrantAnalyzer instance created');
+                
+                // Check if it rendered content
+                const appElement = document.getElementById('app');
+                if (appElement && appElement.innerHTML.includes('Upload Grant Document')) {
+                    log('✅ GrantAnalyzer rendered content to DOM');
+                } else {
+                    log('❌ GrantAnalyzer did not render expected content', 'warning');
+                    log(`App innerHTML length: ${appElement.innerHTML.length}`);
+                }
+                
+                // Test a method
+                if (typeof grantAnalyzer.validateURL === 'function') {
+                    const validation = grantAnalyzer.validateURL('https://example.com');
+                    if (validation && validation.isValid) {
+                        log('✅ validateURL method works');
+                    } else {
+                        log('❌ validateURL method failed');
+                    }
+                } else {
+                    log('❌ validateURL method not found');
+                }
+                
+            } catch (error) {
+                log(`❌ Error initializing GrantAnalyzer: ${error.message}`, 'error');
+                window.console.error('GrantAnalyzer initialization error:', error);
+            }
+        });
+        
+        // Step 4: Test Results Display
+        document.getElementById('step4').addEventListener('click', function() {
+            log('=== STEP 4: Testing Results Display ===');
+            
+            if (!grantAnalyzer) {
+                log('❌ GrantAnalyzer not initialized. Run Step 3 first.', 'error');
+                return;
+            }
+            
+            try {
+                // Test showing results
+                grantAnalyzer.showSuccessState();
+                log('✅ showSuccessState called');
+                
+                // Check if results section is visible
+                const resultsSection = document.getElementById('results-section');
+                if (resultsSection && !resultsSection.classList.contains('hidden')) {
+                    log('✅ Results section is visible');
+                } else {
+                    log('❌ Results section not visible or not found', 'warning');
+                }
+                
+                // Check if sample data is populated
+                const eligibilityContent = document.getElementById('eligibility-content');
+                if (eligibilityContent && eligibilityContent.innerHTML.trim() !== '') {
+                    log('✅ Eligibility content populated');
+                } else {
+                    log('❌ Eligibility content not populated', 'warning');
+                }
+                
+            } catch (error) {
+                log(`❌ Error testing results display: ${error.message}`, 'error');
+                window.console.error('Results display error:', error);
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Page loaded and ready for testing');
+            log('Click the steps above in order to diagnose issues');
+        });
+    </script>
+    
+    <!-- Load scripts -->
+    <script src="js/results-formatter.js" 
+            onload="log('✅ results-formatter.js loaded successfully')" 
+            onerror="log('❌ Failed to load results-formatter.js', 'error')"></script>
+    
+    <script src="js/app.js" 
+            onload="log('✅ app.js loaded successfully')" 
+            onerror="log('❌ Failed to load app.js', 'error')"></script>
+</body>
+</html>

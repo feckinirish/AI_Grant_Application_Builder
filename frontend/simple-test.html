@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Grant Analyzer Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Simple Grant Analyzer Test</h1>
+        
+        <!-- Test Button -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <button id="test-btn" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-lg font-semibold">
+                Click to Test Functionality
+            </button>
+            <div id="output" class="mt-4 p-4 bg-gray-100 rounded min-h-20 font-mono text-sm">
+                Ready to test...
+            </div>
+        </div>
+        
+        <!-- Results Display Area -->
+        <div id="results-area" class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Results Display Test</h2>
+            <div id="sample-results" class="hidden">
+                <!-- Sample results will be shown here -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/results-formatter.js"></script>
+    <script>
+        function log(message) {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] ${message}<br>`;
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+        
+        document.getElementById('test-btn').addEventListener('click', function() {
+            log('🧪 Starting simple test...');
+            
+            try {
+                // Test 1: Check if ResultsFormatter is available
+                if (typeof ResultsFormatter === 'undefined') {
+                    log('❌ ResultsFormatter not found');
+                    return;
+                }
+                log('✅ ResultsFormatter class found');
+                
+                // Test 2: Create instance
+                const formatter = new ResultsFormatter();
+                log('✅ ResultsFormatter instance created');
+                
+                // Test 3: Test formatting functions
+                const eligibilityItems = [
+                    'Must be a registered 501(c)(3) nonprofit organization',
+                    'Organization must have been in operation for at least 2 years'
+                ];
+                
+                const bulletList = formatter.formatBulletList(eligibilityItems);
+                log('✅ Bullet list formatted');
+                
+                const deadlines = ['Application Due: March 15, 2024'];
+                const deadlinesList = formatter.formatDeadlinesList(deadlines);
+                log('✅ Deadlines formatted');
+                
+                const funding = {
+                    minimum: '$25,000',
+                    maximum: '$100,000',
+                    details: ['Average award: $65,000']
+                };
+                const fundingDetails = formatter.formatFundingDetails(funding);
+                log('✅ Funding details formatted');
+                
+                const documents = ['IRS determination letter', 'Audited financial statements'];
+                const checklist = formatter.formatChecklistItems(documents);
+                log('✅ Document checklist formatted');
+                
+                // Test 4: Display results
+                const resultsArea = document.getElementById('sample-results');
+                resultsArea.innerHTML = `
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-semibold mb-3 flex items-center">
+                                <span class="text-blue-500 mr-2">✅</span>
+                                Eligibility Checklist
+                            </h3>
+                            ${bulletList}
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-semibold mb-3 flex items-center">
+                                <span class="text-red-500 mr-2">📅</span>
+                                Key Deadlines
+                            </h3>
+                            ${deadlinesList}
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-semibold mb-3 flex items-center">
+                                <span class="text-green-500 mr-2">💰</span>
+                                Funding Details
+                            </h3>
+                            ${fundingDetails}
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-semibold mb-3 flex items-center">
+                                <span class="text-purple-500 mr-2">📋</span>
+                                Required Documents
+                            </h3>
+                            ${checklist}
+                        </div>
+                    </div>
+                `;
+                
+                resultsArea.classList.remove('hidden');
+                log('✅ Results displayed successfully!');
+                log('🎉 All tests passed!');
+                
+            } catch (error) {
+                log(`❌ Test failed: ${error.message}`);
+                console.error('Test error:', error);
+            }
+        });
+        
+        // Test that the button works
+        document.addEventListener('DOMContentLoaded', function() {
+            log('✅ Page loaded and ready');
+        });
+    </script>
+</body>
+</html>

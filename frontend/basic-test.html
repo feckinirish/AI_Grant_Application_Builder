@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Test</title>
+</head>
+<body>
+    <h1>Basic JavaScript Test</h1>
+    <button id="test-btn">Click Me</button>
+    <div id="output"></div>
+    
+    <script>
+        console.log('Script loaded');
+        
+        document.getElementById('test-btn').addEventListener('click', function() {
+            console.log('Button clicked');
+            document.getElementById('output').innerHTML = 'Button works! Time: ' + new Date().toLocaleTimeString();
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            document.getElementById('output').innerHTML = 'Page loaded at: ' + new Date().toLocaleTimeString();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "name": "grant-analyzer-backend",
+  "version": "1.0.0",
+  "description": "Serverless backend for Grant Analyzer MVP",
+  "main": "index.js",
+  "scripts": {
+    "start": "functions-framework --target=analyzeGrant --port=8080",
+    "dev": "functions-framework --target=analyzeGrant --port=8080 --source=.",
+    "deploy": "gcloud functions deploy analyzeGrant --runtime nodejs18 --trigger-http --allow-unauthenticated",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [
+    "grant",
+    "analyzer",
+    "serverless",
+    "google-cloud-functions"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.3.0",
+    "pdf-parse": "^1.1.1",
+    "cheerio": "^1.0.0-rc.12",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

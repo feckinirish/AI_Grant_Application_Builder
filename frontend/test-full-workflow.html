@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grant Analyzer - Full Workflow Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-4 sm:py-8">
+        <header class="text-center mb-6 sm:mb-8">
+            <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">Grant Analyzer - Test Page</h1>
+            <p class="text-sm sm:text-lg text-gray-600 px-2">Testing the complete workflow with results display</p>
+        </header>
+        
+        <!-- Test Controls -->
+        <div class="max-w-4xl mx-auto mb-6">
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h2 class="text-lg font-semibold text-yellow-800 mb-2">Test Controls</h2>
+                <div class="flex flex-wrap gap-2">
+                    <button id="run-tests" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        Run Automated Tests
+                    </button>
+                    <button id="simulate-pdf" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                        Simulate PDF Upload
+                    </button>
+                    <button id="simulate-url" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                        Simulate URL Input
+                    </button>
+                    <button id="show-results" class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
+                        Show Sample Results
+                    </button>
+                </div>
+                <div id="test-output" class="mt-4 p-3 bg-gray-100 rounded text-sm font-mono max-h-40 overflow-y-auto hidden">
+                    <!-- Test output will appear here -->
+                </div>
+            </div>
+        </div>
+        
+        <main id="app" class="max-w-4xl mx-auto">
+            <!-- Application content will be rendered here -->
+        </main>
+    </div>
+    
+    <script src="js/results-formatter.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Initialize the application
+        let grantAnalyzer;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add a small delay to ensure all scripts are loaded
+            setTimeout(() => {
+                try {
+                    grantAnalyzer = new GrantAnalyzer();
+                    console.log('GrantAnalyzer initialized successfully');
+                    
+                    // Set up test controls
+                    setupTestControls();
+                } catch (error) {
+                    console.error('Failed to initialize GrantAnalyzer:', error);
+                    document.getElementById('test-output').innerHTML = `<div class="text-red-600">Error: ${error.message}</div>`;
+                    document.getElementById('test-output').classList.remove('hidden');
+                }
+            }, 100);
+        });
+        
+        function setupTestControls() {
+            console.log('Setting up test controls...');
+            
+            const runTestsBtn = document.getElementById('run-tests');
+            const simulatePdfBtn = document.getElementById('simulate-pdf');
+            const simulateUrlBtn = document.getElementById('simulate-url');
+            const showResultsBtn = document.getElementById('show-results');
+            const testOutput = document.getElementById('test-output');
+            
+            if (!runTestsBtn || !simulatePdfBtn || !simulateUrlBtn || !showResultsBtn) {
+                console.error('Some test buttons not found');
+                return;
+            }
+            
+            runTestsBtn.addEventListener('click', () => {
+                console.log('Run tests button clicked');
+                testOutput.classList.remove('hidden');
+                testOutput.innerHTML = '';
+                runAutomatedTests();
+            });
+            
+            simulatePdfBtn.addEventListener('click', () => {
+                console.log('Simulate PDF button clicked');
+                simulatePdfUpload();
+            });
+            
+            simulateUrlBtn.addEventListener('click', () => {
+                console.log('Simulate URL button clicked');
+                simulateUrlInput();
+            });
+            
+            showResultsBtn.addEventListener('click', () => {
+                console.log('Show results button clicked');
+                showSampleResults();
+            });
+            
+            console.log('Test controls set up successfully');
+        }
+        
+        function log(message, type = 'info') {
+            const testOutput = document.getElementById('test-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            testOutput.innerHTML += `[${timestamp}] ${icon} ${message}\n`;
+            testOutput.scrollTop = testOutput.scrollHeight;
+            console.log(message);
+        }
+        
+        function runAutomatedTests() {
+            log('🧪 Starting Grant Analyzer Automated Tests...');
+            
+            // Test 1: Check class instantiation
+            try {
+                if (typeof ResultsFormatter === 'undefined') {
+                    log('ResultsFormatter class not found', 'error');
+                    return;
+                }
+                
+                if (typeof GrantAnalyzer === 'undefined') {
+                    log('GrantAnalyzer class not found', 'error');
+                    return;
+                }
+                
+                const formatter = new ResultsFormatter();
+                log('ResultsFormatter instantiated successfully', 'success');
+                
+                if (!grantAnalyzer) {
+                    log('GrantAnalyzer instance not available', 'error');
+                    return;
+                }
+                log('GrantAnalyzer instance available', 'success');
+                
+            } catch (error) {
+                log(`Failed to instantiate classes: ${error.message}`, 'error');
+                return;
+            }
+            
+            // Test 2: Test formatting functions
+            try {
+                const formatter = new ResultsFormatter();
+                
+                // Test bullet list
+                const bulletList = formatter.formatBulletList(['Test item 1', 'Test item 2']);
+                if (bulletList.includes('Test item 1') && bulletList.includes('•')) {
+                    log('Bullet list formatting works', 'success');
+                } else {
+                    log('Bullet list formatting failed', 'error');
+                }
+                
+                // Test date formatting
+                const formattedDate = formatter.formatDate('March 15, 2024');
+                if (formattedDate === '03/15/2024') {
+                    log('Date formatting works', 'success');
+                } else {
+                    log(`Date formatting failed: expected 03/15/2024, got ${formattedDate}`, 'error');
+                }
+                
+                // Test funding range
+                const fundingRange = formatter.formatFundingRange('$25,000', '$100,000');
+                if (fundingRange.includes('Funding Range')) {
+                    log('Funding range formatting works', 'success');
+                } else {
+                    log('Funding range formatting failed', 'error');
+                }
+                
+            } catch (error) {
+                log(`Formatting tests failed: ${error.message}`, 'error');
+            }
+            
+            // Test 3: Check DOM elements
+            const requiredElements = ['app', 'pdf-tab', 'url-tab', 'analyze-btn'];
+            let missingElements = [];
+            
+            requiredElements.forEach(id => {
+                if (!document.getElementById(id)) {
+                    missingElements.push(id);
+                }
+            });
+            
+            if (missingElements.length === 0) {
+                log('All required DOM elements found', 'success');
+            } else {
+                log(`Missing DOM elements: ${missingElements.join(', ')}`, 'error');
+            }
+            
+            // Test 4: Test validation functions
+            try {
+                const validUrl = grantAnalyzer.validateURL('https://example.com/grant');
+                const invalidUrl = grantAnalyzer.validateURL('not-a-url');
+                
+                if (validUrl.isValid && !invalidUrl.isValid) {
+                    log('URL validation works', 'success');
+                } else {
+                    log('URL validation failed', 'error');
+                }
+            } catch (error) {
+                log(`Validation tests failed: ${error.message}`, 'error');
+            }
+            
+            log('🏁 Automated tests complete!');
+        }
+        
+        function simulatePdfUpload() {
+            log('🔄 Simulating PDF upload...');
+            
+            // Create a mock PDF file
+            const mockFile = new File(['mock pdf content'], 'sample-grant.pdf', {
+                type: 'application/pdf',
+                lastModified: Date.now()
+            });
+            
+            // Switch to PDF mode
+            grantAnalyzer.switchInputMode('pdf');
+            
+            // Simulate file selection
+            grantAnalyzer.handleFileSelect(mockFile);
+            
+            log('PDF file simulated and selected', 'success');
+            log('Click "Analyze PDF" button to test the full workflow');
+        }
+        
+        function simulateUrlInput() {
+            log('🔄 Simulating URL input...');
+            
+            // Switch to URL mode
+            grantAnalyzer.switchInputMode('url');
+            
+            // Set URL value
+            const urlInput = document.getElementById('url-input');
+            urlInput.value = 'https://example.com/grant-guidelines';
+            
+            // Trigger input event
+            grantAnalyzer.handleUrlInput(urlInput.value);
+            
+            log('URL input simulated', 'success');
+            log('Click "Analyze URL" button to test the full workflow');
+        }
+        
+        function showSampleResults() {
+            log('🔄 Showing sample results directly...');
+            
+            try {
+                if (!grantAnalyzer) {
+                    log('GrantAnalyzer not available, trying to create new instance...', 'warning');
+                    grantAnalyzer = new GrantAnalyzer();
+                }
+                
+                // Hide any existing states
+                grantAnalyzer.hideAllStates();
+                
+                // Show success state and results
+                grantAnalyzer.showSuccessState();
+                
+                log('Sample results displayed', 'success');
+                log('Test the "Print Results" and "Analyze Another Document" buttons');
+                
+            } catch (error) {
+                log(`Failed to show sample results: ${error.message}`, 'error');
+                console.error('showSampleResults error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

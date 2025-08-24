@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grant Analyzer - Debug Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Grant Analyzer Debug Test</h1>
+        
+        <!-- Debug Info -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Debug Information</h2>
+            <div id="debug-info" class="space-y-2 text-sm font-mono">
+                <div>Loading scripts...</div>
+            </div>
+        </div>
+        
+        <!-- Simple Test Buttons -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Simple Tests</h2>
+            <div class="space-x-4">
+                <button id="test-basic" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    Test Basic JavaScript
+                </button>
+                <button id="test-formatter" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    Test ResultsFormatter
+                </button>
+                <button id="test-analyzer" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                    Test GrantAnalyzer
+                </button>
+            </div>
+            <div id="test-results" class="mt-4 p-4 bg-gray-100 rounded text-sm font-mono min-h-20">
+                <!-- Test results will appear here -->
+            </div>
+        </div>
+        
+        <!-- Grant Analyzer App -->
+        <div id="app" class="bg-white rounded-lg shadow p-6">
+            <!-- App will render here -->
+        </div>
+    </div>
+    
+    <script>
+        // Debug logging function
+        function debugLog(message, type = 'info') {
+            const debugInfo = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            debugInfo.innerHTML += `<div>[${timestamp}] ${icon} ${message}</div>`;
+            console.log(`[DEBUG] ${message}`);
+        }
+        
+        // Test results logging
+        function testLog(message, type = 'info') {
+            const testResults = document.getElementById('test-results');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            testResults.innerHTML += `<div>[${timestamp}] ${icon} ${message}</div>`;
+            testResults.scrollTop = testResults.scrollHeight;
+        }
+        
+        debugLog('Starting debug test page...');
+        
+        // Test basic JavaScript functionality
+        document.getElementById('test-basic').addEventListener('click', () => {
+            testLog('Testing basic JavaScript functionality...');
+            
+            try {
+                // Test basic DOM manipulation
+                const testDiv = document.createElement('div');
+                testDiv.textContent = 'Test element created';
+                testLog('DOM manipulation works', 'success');
+                
+                // Test array methods
+                const testArray = ['item1', 'item2', 'item3'];
+                const mapped = testArray.map(item => `• ${item}`);
+                testLog(`Array mapping works: ${mapped.length} items`, 'success');
+                
+                // Test date formatting
+                const testDate = new Date('2024-03-15');
+                const formatted = testDate.toLocaleDateString('en-US');
+                testLog(`Date formatting works: ${formatted}`, 'success');
+                
+                testLog('Basic JavaScript tests completed', 'success');
+                
+            } catch (error) {
+                testLog(`Basic JavaScript test failed: ${error.message}`, 'error');
+            }
+        });
+        
+        debugLog('Basic test button set up');
+    </script>
+    
+    <!-- Load ResultsFormatter -->
+    <script src="js/results-formatter.js" onload="debugLog('ResultsFormatter loaded', 'success')" onerror="debugLog('Failed to load ResultsFormatter', 'error')"></script>
+    
+    <script>
+        // Test ResultsFormatter after it loads
+        document.getElementById('test-formatter').addEventListener('click', () => {
+            testLog('Testing ResultsFormatter...');
+            
+            try {
+                if (typeof ResultsFormatter === 'undefined') {
+                    testLog('ResultsFormatter class not found', 'error');
+                    return;
+                }
+                
+                const formatter = new ResultsFormatter();
+                testLog('ResultsFormatter instantiated', 'success');
+                
+                // Test bullet list formatting
+                const bulletList = formatter.formatBulletList(['Test item 1', 'Test item 2']);
+                if (bulletList.includes('Test item 1')) {
+                    testLog('Bullet list formatting works', 'success');
+                } else {
+                    testLog('Bullet list formatting failed', 'error');
+                }
+                
+                // Test date formatting
+                const formattedDate = formatter.formatDate('March 15, 2024');
+                testLog(`Date formatting result: ${formattedDate}`, formattedDate === '03/15/2024' ? 'success' : 'warning');
+                
+                // Test funding range
+                const fundingRange = formatter.formatFundingRange('$25,000', '$100,000');
+                testLog(`Funding range: ${fundingRange}`, fundingRange.includes('Funding Range') ? 'success' : 'warning');
+                
+                testLog('ResultsFormatter tests completed', 'success');
+                
+            } catch (error) {
+                testLog(`ResultsFormatter test failed: ${error.message}`, 'error');
+            }
+        });
+        
+        debugLog('ResultsFormatter test button set up');
+    </script>
+    
+    <!-- Load GrantAnalyzer -->
+    <script src="js/app.js" onload="debugLog('GrantAnalyzer loaded', 'success')" onerror="debugLog('Failed to load GrantAnalyzer', 'error')"></script>
+    
+    <script>
+        let grantAnalyzer;
+        
+        // Test GrantAnalyzer after it loads
+        document.getElementById('test-analyzer').addEventListener('click', () => {
+            testLog('Testing GrantAnalyzer...');
+            
+            try {
+                if (typeof GrantAnalyzer === 'undefined') {
+                    testLog('GrantAnalyzer class not found', 'error');
+                    return;
+                }
+                
+                if (!grantAnalyzer) {
+                    grantAnalyzer = new GrantAnalyzer();
+                    testLog('GrantAnalyzer instantiated', 'success');
+                }
+                
+                // Test if app rendered
+                const appElement = document.getElementById('app');
+                if (appElement && appElement.innerHTML.trim() !== '') {
+                    testLog('GrantAnalyzer rendered content', 'success');
+                } else {
+                    testLog('GrantAnalyzer did not render content', 'warning');
+                }
+                
+                // Test validation functions
+                const urlValidation = grantAnalyzer.validateURL('https://example.com');
+                testLog(`URL validation works: ${urlValidation.isValid}`, urlValidation.isValid ? 'success' : 'error');
+                
+                testLog('GrantAnalyzer tests completed', 'success');
+                
+            } catch (error) {
+                testLog(`GrantAnalyzer test failed: ${error.message}`, 'error');
+            }
+        });
+        
+        debugLog('GrantAnalyzer test button set up');
+        
+        // Initialize GrantAnalyzer when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            debugLog('DOM loaded, initializing GrantAnalyzer...');
+            
+            try {
+                if (typeof GrantAnalyzer !== 'undefined') {
+                    grantAnalyzer = new GrantAnalyzer();
+                    debugLog('GrantAnalyzer initialized successfully', 'success');
+                } else {
+                    debugLog('GrantAnalyzer class not available', 'error');
+                }
+            } catch (error) {
+                debugLog(`Failed to initialize GrantAnalyzer: ${error.message}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

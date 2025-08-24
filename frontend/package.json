@@ -1,0 +1,26 @@
+{
+  "name": "grant-analyzer-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Grant Analyzer MVP",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "dev-node": "npx http-server -p 8000 -c-1",
+    "build": "echo 'No build step required for static frontend'",
+    "test": "vitest --run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "grant",
+    "analyzer",
+    "pdf",
+    "frontend"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4"
+  }
+}

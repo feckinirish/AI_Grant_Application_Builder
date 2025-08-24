@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grant Analyzer - Working Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-4 sm:py-8">
+        <header class="text-center mb-6 sm:mb-8">
+            <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">Grant Analyzer - Working Test</h1>
+            <p class="text-sm sm:text-lg text-gray-600 px-2">Testing the complete workflow with results display</p>
+        </header>
+        
+        <!-- Status Display -->
+        <div class="max-w-4xl mx-auto mb-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h2 class="text-lg font-semibold text-blue-800 mb-2">System Status</h2>
+                <div id="status-info" class="text-sm text-blue-700">
+                    Loading...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test Controls -->
+        <div class="max-w-4xl mx-auto mb-6">
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h2 class="text-lg font-semibold text-yellow-800 mb-2">Test Controls</h2>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button onclick="runBasicTest()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        Test Basic Functions
+                    </button>
+                    <button onclick="testFormatter()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                        Test Formatter
+                    </button>
+                    <button onclick="testGrantAnalyzer()" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                        Test Grant Analyzer
+                    </button>
+                    <button onclick="showSampleResults()" class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700">
+                        Show Sample Results
+                    </button>
+                </div>
+                <div id="test-output" class="p-3 bg-gray-100 rounded text-sm font-mono max-h-60 overflow-y-auto">
+                    <!-- Test output will appear here -->
+                </div>
+            </div>
+        </div>
+        
+        <main id="app" class="max-w-4xl mx-auto">
+            <!-- Application content will be rendered here -->
+        </main>
+    </div>
+    
+    <!-- Load scripts with error handling -->
+    <script>
+        // Global variables
+        let grantAnalyzer = null;
+        let scriptsLoaded = {
+            formatter: false,
+            app: false
+        };
+        
+        // Logging function
+        function log(message, type = 'info') {
+            const output = document.getElementById('test-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            output.innerHTML += `[${timestamp}] ${icon} ${message}<br>`;
+            output.scrollTop = output.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        // Update status
+        function updateStatus(message) {
+            document.getElementById('status-info').innerHTML = message;
+        }
+        
+        // Test functions
+        function runBasicTest() {
+            log('🧪 Running basic JavaScript test...');
+            
+            try {
+                // Test DOM manipulation
+                const testDiv = document.createElement('div');
+                testDiv.textContent = 'Test element';
+                log('DOM manipulation works', 'success');
+                
+                // Test array methods
+                const testArray = ['item1', 'item2'];
+                const mapped = testArray.map(item => `• ${item}`);
+                log(`Array methods work: ${mapped.length} items`, 'success');
+                
+                // Test date formatting
+                const date = new Date('2024-03-15');
+                const formatted = date.toLocaleDateString('en-US');
+                log(`Date formatting works: ${formatted}`, 'success');
+                
+                log('Basic JavaScript test completed', 'success');
+                
+            } catch (error) {
+                log(`Basic test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function testFormatter() {
+            log('🧪 Testing ResultsFormatter...');
+            
+            try {
+                if (typeof ResultsFormatter === 'undefined') {
+                    log('ResultsFormatter class not found', 'error');
+                    return;
+                }
+                
+                const formatter = new ResultsFormatter();
+                log('ResultsFormatter instantiated', 'success');
+                
+                // Test formatting functions
+                const bulletList = formatter.formatBulletList(['Test item 1', 'Test item 2']);
+                if (bulletList.includes('Test item 1') && bulletList.includes('•')) {
+                    log('Bullet list formatting works', 'success');
+                } else {
+                    log('Bullet list formatting failed', 'error');
+                }
+                
+                const formattedDate = formatter.formatDate('March 15, 2024');
+                if (formattedDate === '03/15/2024') {
+                    log('Date formatting works', 'success');
+                } else {
+                    log(`Date formatting issue: got ${formattedDate}`, 'warning');
+                }
+                
+                log('ResultsFormatter test completed', 'success');
+                
+            } catch (error) {
+                log(`ResultsFormatter test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function testGrantAnalyzer() {
+            log('🧪 Testing GrantAnalyzer...');
+            
+            try {
+                if (typeof GrantAnalyzer === 'undefined') {
+                    log('GrantAnalyzer class not found', 'error');
+                    return;
+                }
+                
+                if (!grantAnalyzer) {
+                    grantAnalyzer = new GrantAnalyzer();
+                    log('GrantAnalyzer instantiated', 'success');
+                }
+                
+                // Check if app rendered
+                const appElement = document.getElementById('app');
+                if (appElement && appElement.innerHTML.trim() !== '') {
+                    log('GrantAnalyzer rendered content', 'success');
+                } else {
+                    log('GrantAnalyzer did not render content', 'warning');
+                }
+                
+                // Test validation
+                const urlValidation = grantAnalyzer.validateURL('https://example.com');
+                if (urlValidation && urlValidation.isValid) {
+                    log('URL validation works', 'success');
+                } else {
+                    log('URL validation failed', 'error');
+                }
+                
+                log('GrantAnalyzer test completed', 'success');
+                
+            } catch (error) {
+                log(`GrantAnalyzer test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function showSampleResults() {
+            log('🔄 Showing sample results...');
+            
+            try {
+                if (!grantAnalyzer) {
+                    log('Creating GrantAnalyzer instance...', 'info');
+                    grantAnalyzer = new GrantAnalyzer();
+                }
+                
+                // Hide any existing states
+                if (typeof grantAnalyzer.hideAllStates === 'function') {
+                    grantAnalyzer.hideAllStates();
+                }
+                
+                // Show success state and results
+                if (typeof grantAnalyzer.showSuccessState === 'function') {
+                    grantAnalyzer.showSuccessState();
+                    log('Sample results displayed', 'success');
+                } else {
+                    log('showSuccessState method not found', 'error');
+                }
+                
+            } catch (error) {
+                log(`Failed to show results: ${error.message}`, 'error');
+            }
+        }
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            log('DOM loaded, initializing...');
+            updateStatus('DOM loaded, loading scripts...');
+            
+            // Load ResultsFormatter
+            const formatterScript = document.createElement('script');
+            formatterScript.src = 'js/results-formatter.js';
+            formatterScript.onload = function() {
+                scriptsLoaded.formatter = true;
+                log('ResultsFormatter script loaded', 'success');
+                updateStatus('ResultsFormatter loaded, loading GrantAnalyzer...');
+                
+                // Load GrantAnalyzer
+                const appScript = document.createElement('script');
+                appScript.src = 'js/app.js';
+                appScript.onload = function() {
+                    scriptsLoaded.app = true;
+                    log('GrantAnalyzer script loaded', 'success');
+                    
+                    // Initialize GrantAnalyzer
+                    setTimeout(() => {
+                        try {
+                            if (typeof GrantAnalyzer !== 'undefined') {
+                                grantAnalyzer = new GrantAnalyzer();
+                                log('GrantAnalyzer initialized successfully', 'success');
+                                updateStatus('✅ All systems ready! Use the test buttons above.');
+                            } else {
+                                log('GrantAnalyzer class not available', 'error');
+                                updateStatus('❌ GrantAnalyzer class not found');
+                            }
+                        } catch (error) {
+                            log(`Failed to initialize GrantAnalyzer: ${error.message}`, 'error');
+                            updateStatus(`❌ Initialization failed: ${error.message}`);
+                        }
+                    }, 100);
+                };
+                appScript.onerror = function() {
+                    log('Failed to load GrantAnalyzer script', 'error');
+                    updateStatus('❌ Failed to load GrantAnalyzer script');
+                };
+                document.head.appendChild(appScript);
+            };
+            formatterScript.onerror = function() {
+                log('Failed to load ResultsFormatter script', 'error');
+                updateStatus('❌ Failed to load ResultsFormatter script');
+            };
+            document.head.appendChild(formatterScript);
+        });
+    </script>
+</body>
+</html>
